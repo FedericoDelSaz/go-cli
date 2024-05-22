@@ -36,13 +36,11 @@ func converterArray(fileLines []string) []int64 {
 			intArray[i] = num
 		}
 	}
-
 	fmt.Println(intArray)
 	return intArray
 }
 
 func orderArray(intArray []int64) []int64 {
-
 	sort.Slice(intArray, func(i, j int) bool {
 		return intArray[i] > intArray[j]
 	})
@@ -57,7 +55,6 @@ func removeEmptyPositions(intArray []int64) []int64 {
 			result = append(result, value)
 		}
 	}
-
 	return result
 }
 
@@ -84,6 +81,5 @@ func main() {
 	intArray := converterArray(fileLines)
 	cleanedArray := removeEmptyPositions(intArray)
 	orderedArray := orderArray(cleanedArray)
-	fmt.Print(orderedArray)
 	writeFile("output.txt", orderedArray)
 }

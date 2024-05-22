@@ -1,7 +1,7 @@
 # SRE Code Test
 
 First of all, thank you very much for your interest in the Site Reliability
-Engineer position at Cabify.
+Engineer position.
 
 Get yourself comfortable and make sure to double-check the test requirements.
 
