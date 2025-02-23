@@ -1,17 +1,17 @@
 # Stage 1: Build the Go binary
-FROM golang:1.20 AS builder
+FROM golang:1.23 AS builder
 
 # Set the working directory
 WORKDIR /app
 
 # Copy only go.mod initially
-COPY go.mod ./
+COPY sre-cli-tool/go.mod ./
 
 # Skip go.sum if it doesn't exist
 RUN go mod download || true
 
 # Copy the rest of the application source code
-COPY . .
+COPY sre-cli-tool .
 
 # Build the Go binary
 RUN go build -o cli-tool main.go
