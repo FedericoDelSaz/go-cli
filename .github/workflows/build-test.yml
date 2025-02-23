@@ -39,7 +39,7 @@ jobs:
       if: ${{ inputs.generateCLI == false }}
       run: go build -o top_numbers
 
-    - name: Build CLI
+    - name: Build
       working-directory: sre-cli-tool
       if: ${{ inputs.generateCLI == true }}
       run: go build -v .
