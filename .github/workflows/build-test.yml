@@ -35,17 +35,17 @@ jobs:
         go-version: '1.23'
 
     - name: Build CLI
-      working-directory: .sre-cli-tool
+      working-directory: sre-cli-tool
       if: ${{ inputs.generateCLI == false }}
       run: go build -o top_numbers
 
     - name: Build CLI
-      working-directory: .sre-cli-tool
+      working-directory: sre-cli-tool
       if: ${{ inputs.generateCLI == true }}
       run: go build -v .
 
     - name: Test
-      working-directory: .sre-cli-tool
+      working-directory: sre-cli-tool
       run: go test -v .
 
     - name: 'Upload Artifact'
@@ -53,5 +53,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: top_numbers
-        path: .sre-cli-tool/top_numbers
+        path: sre-cli-tool/top_numbers
         retention-days: 1
