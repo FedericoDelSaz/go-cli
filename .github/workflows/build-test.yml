@@ -18,10 +18,6 @@ jobs:
         with:
           go-version: '1.23'
 
-      - name: Build CLI (if generateCLI is false)
-        working-directory: sre-cli-tool
-        run: go build -o top_numbers
-
       - name: Build
         working-directory: sre-cli-tool
         run: go build -v .
@@ -29,10 +25,3 @@ jobs:
       - name: Test
         working-directory: sre-cli-tool
         run: go test -v .
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: top_numbers
-          path: sre-cli-tool/top_numbers
-          retention-days: 1
