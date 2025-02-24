@@ -1,0 +1,26 @@
+name: "top_numbers Docker Image"
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: "Example: latest or 3.14.3"
+        required: true
+      repositoryName:
+        description: "Docker Repository. Example: docker.io/bitnami/redis."
+        required: true
+
+jobs:
+  top-numbers-creation:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build --tag ${{ inputs.repositoryName }}:${{ inputs.imageTag }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ inputs.repositoryName }}:${{ inputs.imageTag }}

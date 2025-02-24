@@ -22,8 +22,8 @@ Write a simple CLI tool (feel free to use any programming language you're
 comfortable with) that accepts the following arguments:
 
 - `-n int`: An integer for the value N, which will be output length.
--  `--input-file string`: A string representing a path to an input file.
-- `--output-file string`: A string representing a path to an output file.
+-  `-input-file string`: A string representing a path to an input file.
+- `-output-file  string`: A string representing a path to an output file.
 
 The input file will contain one number per line. The valid number is anything
 that is a valid unsigned 64-bit integer. The goal of your tool is to read the

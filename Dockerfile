@@ -17,7 +17,7 @@ COPY sre-cli-tool .
 RUN go build -o cli-tool main.go
 
 # Stage 2: Create the final lightweight image
-FROM debian:bullseye-slim
+FROM debian:bullseye-20250203-slim
 
 # Set the working directory in the container
 WORKDIR /app

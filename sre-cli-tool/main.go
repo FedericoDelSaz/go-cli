@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"sort"
@@ -9,148 +10,121 @@ import (
 	"strings"
 )
 
-const maxTopResults = 30000000
-
-// Custom error messages
-var (
-	errFileNotExist    = fmt.Errorf("ERROR: input file does not exist")
-	errFileNotReadable = fmt.Errorf("ERROR: input file is not readable")
-	errInvalidN        = fmt.Errorf("ERROR: Number of top results must be bigger than 0")
-	errNOverUpperLimit = fmt.Errorf("ERROR: The maximum number of top results must be less or equal than 30000000")
-	errInvalidLine     = fmt.Errorf("WARN: Invalid line")
+// Error messages
+const (
+	errorInputFileNotExist    = "ERROR: input file does not exist."
+	errorInputFileNotReadable = "ERROR: input file is not readable."
+	errorInvalidNValue        = "ERROR: Number of top results must be bigger than 0."
+	errorNValueTooHigh        = "ERROR: The maximum number of top results must be less or equal than 30000000."
+	warnInvalidLine           = "WARN: Invalid line"
 )
 
-// Custom type for a slice of uint64 to implement sort.Interface
-type Uint64Slice []uint64
+func main() {
+	// Define flags
+	n := flag.Int("n", 0, "The value N for the number of top results.")
+	inputFile := flag.String("input-file", "", "Path to the input file.")
+	outputFile := flag.String("output-file", "", "Path to the output file.")
 
-// Implement the sort.Interface methods
-func (p Uint64Slice) Len() int           { return len(p) }
-func (p Uint64Slice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-func (p Uint64Slice) Less(i, j int) bool { return p[i] > p[j] } // Sort descending
+	// Parse the flags
+	flag.Parse()
 
-// checkError checks if an error occurred and exits with a message.
-func checkError(err error) {
+	// Validate inputs
+	if err := validateFlags(*n, *inputFile, *outputFile); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// Read numbers from the file
+	numbers, err := readNumbersFromFile(*inputFile)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	// Sort numbers in descending order
+	sort.Slice(numbers, func(i, j int) bool {
+		return numbers[i] > numbers[j]
+	})
+
+	// Get top N largest numbers
+	if len(numbers) > *n {
+		numbers = numbers[:*n]
+	}
+
+	// Write output to file
+	if err := writeNumbersToFile(numbers, *outputFile); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Processing complete. Results written to:", *outputFile)
 }
 
-// readFileLines reads the file line by line and parses unsigned 64-bit integers.
-func readFileLines(filename string, n int) ([]uint64, error) {
-	file, err := os.Open(filename)
+// validateFlags validates the input flags
+func validateFlags(n int, inputFile, outputFile string) error {
+	if n <= 0 {
+		return fmt.Errorf(errorInvalidNValue)
+	}
+	if n > 30000000 {
+		return fmt.Errorf(errorNValueTooHigh)
+	}
+	if inputFile == "" {
+		return fmt.Errorf("ERROR: Input file path is required.")
+	}
+	if outputFile == "" {
+		return fmt.Errorf("ERROR: Output file path is required.")
+	}
+	return nil
+}
+
+// readNumbersFromFile reads numbers from the input file and returns them as a slice of uint64
+func readNumbersFromFile(inputFile string) ([]uint64, error) {
+	file, err := os.Open(inputFile)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, errFileNotExist
+			return nil, fmt.Errorf(errorInputFileNotExist)
 		}
-		return nil, errFileNotReadable
+		return nil, fmt.Errorf(errorInputFileNotReadable)
 	}
 	defer file.Close()
 
 	var numbers []uint64
 	scanner := bufio.NewScanner(file)
-
-	// Reading lines and parsing unsigned 64-bit integers
 	for scanner.Scan() {
 		line := scanner.Text()
-		// Parse the line to uint64
-		num, err := parseUint64(line)
-		if err != nil {
-			// Warn about invalid line
-			fmt.Printf("WARN: Invalid line %s\n", line)
-			continue
-		}
-
-		// Append to the numbers slice
-		numbers = append(numbers, num)
-		if len(numbers) > n {
-			// Keep only top N numbers
-			sort.Sort(Uint64Slice(numbers))
-			numbers = numbers[:n]
+		numStrs := strings.Fields(line)
+		for _, numStr := range numStrs {
+			num, err := strconv.ParseUint(numStr, 10, 64)
+			if err != nil {
+				// If the line is invalid, print a warning and skip
+				fmt.Printf("%s %s\n", warnInvalidLine, line)
+				continue
+			}
+			numbers = append(numbers, num)
 		}
 	}
 
+	// Handle error from scanner
 	if err := scanner.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERROR: Error reading the input file: %v", err)
 	}
-
 	return numbers, nil
 }
 
-// parseUint64 tries to parse a string into a uint64, returns an error if invalid.
-func parseUint64(s string) (uint64, error) {
-	// Only allow valid unsigned 64-bit integers
-	if strings.Contains(s, " ") {
-		return 0, fmt.Errorf("invalid")
-	}
-	return strconv.ParseUint(s, 10, 64)
-}
-
-// writeFile writes the sorted numbers to an output file.
-func writeFile(filename string, numbers []uint64) error {
-	file, err := os.Create(filename)
+// writeNumbersToFile writes the given numbers to the specified output file
+func writeNumbersToFile(numbers []uint64, outputFile string) error {
+	output, err := os.Create(outputFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("ERROR: Could not create output file: %v", err)
 	}
-	defer file.Close()
+	defer output.Close()
 
-	writer := bufio.NewWriter(file)
 	for _, num := range numbers {
-		_, err := writer.WriteString(fmt.Sprintf("%d\n", num))
+		_, err := fmt.Fprintln(output, num)
 		if err != nil {
-			return err
+			return fmt.Errorf("ERROR: Failed to write to output file: %v", err)
 		}
 	}
 
-	return writer.Flush()
-}
-
-func main() {
-	// Parse arguments
-	nFlag := 0
-	inputFileFlag := ""
-	outputFileFlag := ""
-
-	// Read arguments from the command line
-	for i := 0; i < len(os.Args); i++ {
-		switch os.Args[i] {
-		case "-n":
-			i++
-			fmt.Sscanf(os.Args[i], "%d", &nFlag)
-		case "--input-file":
-			i++
-			inputFileFlag = os.Args[i]
-		case "--output-file":
-			i++
-			outputFileFlag = os.Args[i]
-		}
-	}
-
-	// Argument validation
-	if nFlag <= 0 {
-		checkError(errInvalidN)
-	}
-	if nFlag > maxTopResults {
-		checkError(errNOverUpperLimit)
-	}
-	if inputFileFlag == "" {
-		checkError(fmt.Errorf("ERROR: --input-file must be specified"))
-	}
-	if outputFileFlag == "" {
-		checkError(fmt.Errorf("ERROR: --output-file must be specified"))
-	}
-
-	// Read file and get the top N largest numbers
-	numbers, err := readFileLines(inputFileFlag, nFlag)
-	checkError(err)
-
-	// Sort the numbers in descending order
-	sort.Sort(Uint64Slice(numbers))
-
-	// Write to output file
-	err = writeFile(outputFileFlag, numbers)
-	checkError(err)
-
-	// Print success message
-	fmt.Printf("Successfully wrote %d numbers to %s\n", len(numbers), outputFileFlag)
+	return nil
 }
