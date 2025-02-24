@@ -1,0 +1,17 @@
+name: "Build and Push Docker Image"
+description: "action compose where build, tag and push docker image"
+inputs:
+  image-tag:
+    description: "Example: latest or 3.14.3"
+    required: true
+  repository-name:
+    description: "Docker Repository. Example: docker.io/bitnami/redis."
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Push Docker image
+      shell: bash
+      run: |
+        docker build --tag ${{ inputs.repository-name }}:${{ inputs.image-tag }}
+        docker push ${{ inputs.repository-name }}:${{ inputs.image-tag }}
