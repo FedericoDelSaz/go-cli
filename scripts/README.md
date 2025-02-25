@@ -12,7 +12,7 @@ This script generates a file containing 30 million random unsigned 64-bit intege
 3. Run the script using Python:
 
    ```bash
-   python script.py
+   python3 input-file-generator.py
    ```
 
 This will generate a file named `input-max.txt` in the same directory as the script, containing 30 million random numbers.

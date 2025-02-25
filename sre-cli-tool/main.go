@@ -14,8 +14,8 @@ import (
 const (
 	errorInputFileNotExist    = "ERROR: input file does not exist."
 	errorInputFileNotReadable = "ERROR: input file is not readable."
-	errorInvalidNValue        = "ERROR: Number of top results must be bigger than 0."
-	errorNValueTooHigh        = "ERROR: The maximum number of top results must be less or equal than 30000000."
+	errorInvalidNValue        = "ERROR: Number of top results must be greater than 0."
+	errorNValueTooHigh        = "ERROR: The maximum number of top results must be less than or equal to 30,000,000."
 	warnInvalidLine           = "WARN: Invalid line"
 )
 
@@ -24,6 +24,13 @@ func main() {
 	n := flag.Int("n", 1, "The value N for the number of top results.")
 	inputFile := flag.String("input-file", "", "Path to the input file.")
 	outputFile := flag.String("output-file", "", "Path to the output file.")
+
+	// Custom usage message
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s --n <value> --input-file <path> --output-file <path>\n", os.Args[0])
+		fmt.Fprintln(os.Stderr, "Options:")
+		flag.PrintDefaults()
+	}
 
 	// Parse the flags
 	flag.Parse()
@@ -69,10 +76,10 @@ func validateFlags(n int, inputFile, outputFile string) error {
 		return fmt.Errorf(errorNValueTooHigh)
 	}
 	if inputFile == "" {
-		return fmt.Errorf("ERROR: Input file path is required.")
+		return fmt.Errorf("ERROR: --input-file is required.")
 	}
 	if outputFile == "" {
-		return fmt.Errorf("ERROR: Output file path is required.")
+		return fmt.Errorf("ERROR: --output-file is required.")
 	}
 	return nil
 }
