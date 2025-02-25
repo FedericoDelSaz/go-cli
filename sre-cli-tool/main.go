@@ -21,7 +21,7 @@ const (
 
 func main() {
 	// Define flags
-	n := flag.Int("n", 0, "The value N for the number of top results.")
+	n := flag.Int("n", 1, "The value N for the number of top results.")
 	inputFile := flag.String("input-file", "", "Path to the input file.")
 	outputFile := flag.String("output-file", "", "Path to the output file.")
 
