@@ -1,29 +1,35 @@
-# Stage 1: Build the Go binary
+# Use the official Golang image as the base image
 FROM golang:1.23 AS builder
 
-# Set the working directory
+# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copy only go.mod initially
-COPY sre-cli-tool/go.mod ./
+# Copy the Go Modules files
+COPY go.mod go.sum ./
 
-# Skip go.sum if it doesn't exist
-RUN go mod download || true
+# Download dependencies
+RUN go mod tidy
 
-# Copy the rest of the application source code
-COPY sre-cli-tool .
+# Copy the entire project into the container
+COPY . .
 
-# Build the Go binary
-RUN go build -o cli-tool main.go
+# Build the Go app
+RUN go build -o cli-tool .
 
-# Stage 2: Create the final lightweight image
-FROM debian:bullseye-20250203-slim
+# Start a new stage from a smaller image
+FROM alpine:latest
 
-# Set the working directory in the container
-WORKDIR /app
+# Install necessary dependencies for running the Go binary
+RUN apk --no-cache add ca-certificates
 
-# Copy the compiled Go binary from the builder stage
+# Set the working directory inside the container
+WORKDIR /root/
+
+# Copy the pre-built binary from the builder stage
 COPY --from=builder /app/cli-tool .
 
-# Specify the command to run the CLI tool
-ENTRYPOINT ["/app/cli-tool"]
+# Expose the port the app runs on (if applicable)
+# EXPOSE 8080
+
+# Command to run the executable
+ENTRYPOINT ["./cli-tool"]
