@@ -13,8 +13,10 @@ RUN go mod download || true
 # Copy the rest of the application source code
 COPY sre-cli-tool .
 
+WORKDIR /app/sre-cli-tool
+
 # Build the Go binary
-RUN go build -o cli-tool main.go
+RUN go build -o top_numbers main.go
 
 # Stage 2: Create the final lightweight image
 FROM debian:bullseye-20250203-slim
@@ -23,7 +25,7 @@ FROM debian:bullseye-20250203-slim
 WORKDIR /app
 
 # Copy the compiled Go binary from the builder stage
-COPY --from=builder /app/cli-tool .
+COPY --from=builder /app/sre-cli-tool/top_numbers .
 
 # Specify the command to run the CLI tool
-ENTRYPOINT ["/app/cli-tool"]
+ENTRYPOINT ["/app/top_numbers"]
