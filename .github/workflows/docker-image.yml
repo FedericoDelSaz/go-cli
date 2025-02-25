@@ -9,6 +9,7 @@ on:
       repositoryName:
         description: "Docker Repository. Example: felodel/top_numbers."
         required: true
+        default: "felodel/top_numbers"
 
 jobs:
   top-numbers-creation:
