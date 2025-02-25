@@ -23,7 +23,7 @@ Since sorting dominates the operations, the overall time complexity is **O(L log
 For cases where **N** is significantly smaller than **L**, we can optimize this further (see the improvements section).
 
 ## Space Complexity
-- **Storing valid numbers:** The program keeps all valid numbers in memory, which results in **O(L)** space usage in the worst case.
+- **Storing valid numbers:** The program keeps all valid numbers in memory, which results in **O(L)** space usage.
 - **Sorting in-place:** The sorting operation does not require extra space beyond the storage of numbers, maintaining **O(L)** space complexity.
 - **Output storage:** The output file does not contribute to in-memory space usage.
 
@@ -31,18 +31,8 @@ Thus, the overall space complexity is **O(L)**.
 
 ## Potential Improvements
 
-### Optimized Selection Using a Min-Heap (O(L log N))
-Instead of sorting the entire list (**O(L log L)**), we can use a min-heap of size **N** (**O(log N)** per insert) to store the top **N** numbers.
-This would improve time complexity to **O(L log N)**, which is much better when **N << L**.
-
-**Implementation:** Use `container/heap` to maintain a heap of size **N**.
-
-### Stream Processing to Reduce Memory Usage (O(N))
+### Stream Processing to Reduce Memory Usage and performance (O(N))
 Instead of storing all numbers, we can process the file line by line, maintaining only the **N** largest numbers in a heap.
 This reduces space complexity from **O(L)** to **O(N)**, which is significant for large input files.
 
-### Parallel Processing for File Reading & Sorting
-If the input file is huge, we can:
-- Use goroutines to read and parse lines concurrently.
-- Use external sorting techniques for cases where numbers don't fit in memory.
 
