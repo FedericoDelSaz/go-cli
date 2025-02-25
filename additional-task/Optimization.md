@@ -28,5 +28,19 @@ Instead of sorting all numbers in memory, we could:
 2. **Merge sorted chunks efficiently** (k-way merge) to get the top N numbers.
 3. **Stream the output** instead of keeping everything in memory to optimize resource usage.
 
-This approach is known as **External Merge Sort**, which is well-suited for handling very large input files efficiently.
+#### **Example:**
+Imagine you have a huge file with **billions of numbers**, and you need to find the **top N largest numbers**. Instead of:
+1. **Reading the entire file into memory**
+2. **Sorting everything in memory**
+3. **Storing all results in an array**
+
+You can:
+1. **Process the file in chunks** (read part of the file, sort it, write temporary results).
+2. **Use a merging strategy** (e.g., k-way merge) to find the top N numbers.
+3. **Write results to the output as they are found** (instead of storing them all in memory).
+
+### **Why is this important?**
+- Avoids running out of memory (**O(1) space instead of O(N)**).
+- Makes it possible to handle massive datasets efficiently.
+- Works well in **big data** and **stream processing** environments.
 

@@ -11,7 +11,7 @@ The overall time complexity of the program is determined by the following steps:
 
 2. **Sorting the numbers** (`sort.Slice`):
 
-    - Sorting an array of `M` numbers takes **O(M log M)** time in the worst case.
+    - Sorting an array of `M` numbers takes **O(M log M)** time.
 
 3. **Selecting the top ****`N`**** numbers**:
 
@@ -62,6 +62,8 @@ If `N` is much smaller than `M`, then `O(N)` is negligible, and the space comple
 | Selecting top N | O(N)            | O(1)             |
 | Writing output  | O(N)            | O(1)             |
 | **Total**       | **O(M log M)**  | **O(M)**         |
+
+**NOTE: O(1) (Constant Time Complexity) *** means that the algorithm's execution time or space requirement does not grow as the input size increases.
 
 Thus, the program efficiently processes large input files but requires sufficient memory to hold all numbers during execution.
 
