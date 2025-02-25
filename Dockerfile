@@ -29,4 +29,4 @@ WORKDIR /root/
 COPY --from=builder /app/cli-tool .
 
 # Command to run the executable
-ENTRY
+ENTRYPOINT ["./cli-tool"]
