@@ -4,8 +4,11 @@ FROM golang:1.23 AS builder
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copy the Go Modules files
-COPY go.mod go.sum ./
+# Copy only go.mod initially
+COPY sre-cli-tool/go.mod ./
+
+# Skip go.sum if it doesn't exist
+RUN go mod download || true
 
 # Download dependencies
 RUN go mod tidy
