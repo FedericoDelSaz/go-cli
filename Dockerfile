@@ -1,16 +1,13 @@
-# Use the official Golang image as the base image
-FROM golang:1.22.2 AS builder
+# Use the official Golang image with version 1.23
+FROM golang:1.23 AS builder
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copy only go.mod initially
-COPY sre-cli-tool/go.mod ./
+# Copy the Go Modules files
+COPY go.mod go.sum ./
 
-# Skip go.sum if it doesn't exist
-RUN go mod download || true
-
-# Download dependencies
+# Download dependencies and tidy up the modules
 RUN go mod tidy
 
 # Copy the entire project into the container
@@ -31,8 +28,5 @@ WORKDIR /root/
 # Copy the pre-built binary from the builder stage
 COPY --from=builder /app/cli-tool .
 
-# Expose the port the app runs on (if applicable)
-# EXPOSE 8080
-
 # Command to run the executable
-ENTRYPOINT ["./cli-tool"]
+ENTRY
