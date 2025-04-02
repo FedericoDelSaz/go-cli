@@ -1,21 +1,5 @@
 # SRE Code Test
 
-First of all, thank you very much for your interest in the Site Reliability
-Engineer position.
-
-Get yourself comfortable and make sure to double-check the test requirements.
-
-You will have two weeks to complete the test. We would expect you to work on
-this for no more than 2-3 hours, but you probably have other things to do in
-your life, so we want to give you plenty of time to take on the challenge. And
-if you decide not to, then it is fine too, just please let us know if that is
-the case.
-
-If you have any questions about anything, please do not hesitate to ask us:
-better safe than sorry!
-
-We look forward to seeing the results. Have fun, and good luck!
-
 ### The Problem
 
 Write a simple CLI tool (feel free to use any programming language you're
